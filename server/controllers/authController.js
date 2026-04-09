@@ -16,6 +16,10 @@ const login = async (req, res) => {
     if (!admin) {
       return res.status(401).json({ error: "Invalid credentials" });
     }
+    const isValid = await admin.validatePassword(password);
+    if (!isValid) {
+      return res.status(401).json({ error: "Invalid credentials" });
+    }
     const token = jwt.sign(
       { id: admin.id, username: admin.username },
       process.env.JWT_SECRET,
@@ -26,4 +30,8 @@ const login = async (req, res) => {
     console.error("Login error:", err);
     res.status(500).json({ error: "Login failed" });
   }
+};
+
+module.exports = {
+  login,
 };
